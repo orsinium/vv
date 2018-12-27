@@ -1,9 +1,9 @@
 import re
 from datetime import date
 from enum import Enum
-from typing import List, Optional
+from typing import List
 
-from vv import default, value, Error, errors, scheme
+from vv import default, value, Error, errors, scheme, optional
 
 
 errors.register('title', '{name} ({value}) should start with capital letter')
@@ -23,7 +23,7 @@ class Author:
     # ^     (https://github.com/kachayev/fn.py).
     # ^ 3. We can pass Error(slug) that will be returned if validator returns False.
     #       If we need more than one error, validator can return Error object itself.
-    last_name: Optional[str] = ('Last Name', value.istitle(), Error('title'))
+    last_name: str = ('Last Name', value.istitle(), Error('title'), optional)
     # ^ optional parameter
     sex: str = (Sex, default(Sex.FEMALE))
     # ^ 1. enum.Enum will be interpreted as choice.
@@ -31,11 +31,11 @@ class Author:
     # ^ 3. If verbose name missed, it will be automatically generated from field name.
     hometown: str
     # ^ Yeah, you can miss any params, of course.
-    birthday: Optional[date] = (lambda d: 0 < (date.today() - d) < 150 * 365)
+    birthday: date = (optional, lambda d: 0 < (date.today() - d) < 150 * 365)
     # ^ Sometimes we have complicated validator that can't be covered by `value`
 
 
-@dataclass
+@scheme
 class Book:
     title: str
     authors: List[Author] = len(value) >= 1

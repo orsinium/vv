@@ -4,6 +4,7 @@ from enum import Enum
 from typeguard import check_type
 
 from .field import Field
+from .flags import NOTHING
 
 
 def _check_choices(choices: Enum, value: Any) -> bool:
@@ -23,7 +24,7 @@ def _check_choices(choices: Enum, value: Any) -> bool:
 
 def _check_field(field: Field, value: Any) -> List[str]:
     # check typing
-    if field.hint is not None:
+    if field.hint is not NOTHING:
         try:
             check_type(
                 argname=field.name,
